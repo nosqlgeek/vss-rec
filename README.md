@@ -36,7 +36,7 @@ idx_def = IndexDefinition(prefix=["{}:".format(item_type)])
 con.ft("idx:{}".format(index_name)).create_index(idx_schema, idx_def)
 ```
 
-### `add
+### `add`
 
 This method adds a vector with meta data to the database. I use a Redis Hash in this case, but you can also store a vector within a JSON field.
 
