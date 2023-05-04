@@ -162,4 +162,4 @@ score = 0.0339003205299
 {'time': 1683233712.02643, 'descr': 'David likes books and comics.', 'labels': 'books, comics', 'vec': [0.699999988079071, 0.8999999761581421, 0.10000000149011612]}
 ```
 
-It's important to understand that a lower score means that a vector is closer to the search vector. The result is ordered (ascending) by the vector field's score.
+It's important to understand that a lower score means that a vector is closer to the search vector. In my case, the result is ordered (ascending) by the vector field's score.
