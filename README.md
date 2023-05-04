@@ -79,3 +79,68 @@ con.ft("idx:{}".format(index_name)).search(redis_query, query_params={"vector": 
 Please take a look at the [vector similarity search reference documentation](https://redis.io/docs/stack/search/reference/vectors/) for further details.
 
 
+## Putting it all together
+
+As said, I decided to add a thin layer of abstraction by implementing a VectorDB class. The following example shows how to
+
+1. Create the index
+2. Add some vectors with meta data
+3. Perform a simple query for users that were labeled with specific interests
+4. Execute a vector similarity search for the 2 nearest neighbours
+
+
+Here is the source code:
+
+```
+import os
+from vector_db import VectorDB
+
+if __name__ == '__main__':
+    print("Connecting to the vector database ...")
+    db = VectorDB(os.getenv("DB_HOST"), os.getenv("DB_PORT"), os.getenv("DB_PWD"))
+
+    print("Deleting all vectors ...")
+    db.con.flushall()
+
+    print("Creating the index ...")
+    db.create_index(dimension=3, index_name="interests", item_type="user")
+
+    print("Adding some vectors ...")
+    db.add("user", "samuel", {"descr": "Samuel is into books and comics", "labels": ["books", "comics"]}, [0.9, 0.7, 0.2])
+    db.add("user", "david", {"descr": "David likes books and comics.", "labels" : ["books", "comics"]}, [0.7, 0.9, 0.1])
+    db.add("user", "pieter", {"descr": "Pieter likes comics.", "labels":["comics"]}, [0.3, 0.9, 0.2])
+    db.add("user", "morti", {"descr": "Morti is into comics and computers.", "labels":["comics", "computers"]}, [0.1, 0.9, 0.7])
+
+    print("The following users like books:")
+    for r in db.search("@labels:{books}", index_name="interests"):
+        print(r)
+
+    print("Checking for users with the same interest ...")
+    search_vector = [0.9, 0.7, 0.2]
+    print("search_vector = {}".format(search_vector))
+    for r in db.vector_search("*", search_vector, 2, index_name="interests"):
+        print("score = {}".format(r["score"]))
+        print(db.get(r["type"], r["id"]))
+```
+
+The output of this program then is:
+
+```
+Creating the index ...
+Adding some vectors ...
+data = {'time': 1683233711.983063, 'descr': 'Samuel is into books and comics', 'labels': 'books, comics', 'vec': b'fff?333?\xcd\xccL>'}
+data = {'time': 1683233712.02643, 'descr': 'David likes books and comics.', 'labels': 'books, comics', 'vec': b'333?fff?\xcd\xcc\xcc='}
+data = {'time': 1683233712.0603049, 'descr': 'Pieter likes comics.', 'labels': 'comics', 'vec': b'\x9a\x99\x99>fff?\xcd\xccL>'}
+data = {'time': 1683233712.094195, 'descr': 'Morti is into comics and computers.', 'labels': 'comics, computers', 'vec': b'\xcd\xcc\xcc=fff?333?'}
+The following users like books:
+{'id': 'samuel', 'type': 'user'}
+{'id': 'david', 'type': 'user'}
+Checking for users with the same interest ...
+search_vector = [0.9, 0.7, 0.2]
+score = 5.96046447754e-08
+{'time': 1683233711.983063, 'descr': 'Samuel is into books and comics', 'labels': 'books, comics', 'vec': [0.8999999761581421, 0.699999988079071, 0.20000000298023224]}
+score = 0.0339003205299
+{'time': 1683233712.02643, 'descr': 'David likes books and comics.', 'labels': 'books, comics', 'vec': [0.699999988079071, 0.8999999761581421, 0.10000000149011612]}
+```
+
+It's important to understand that a lower score means that a vector is closer to the search vector. The result is ordered (ascending) by the vector field's score.
