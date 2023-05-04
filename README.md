@@ -7,7 +7,7 @@ The idea is quite simple:
 1. The interests of a user are expressed as a vector
 2. Each component of the vector is associated to one category of interest
 
-The following table
+The table
 
 |Books|Comics|Computers|
 |---|---|---|
