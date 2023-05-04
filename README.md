@@ -83,7 +83,7 @@ vector_query = "{}=>[KNN {} @{} $vector]".format(meta_data_query, num_neighbours
 
 What I call `metadata query`  refers to a RediSearch query that is, in the first step, not related to the vector. This allows you to pre-filter based on additional metadata fields, such as the description (`desc`) or the `labels`.
 
-You can then query the database following way:
+You can then query the database the following way:
 
 ```
 # The name of the vector score field depends on the name of the vector field
