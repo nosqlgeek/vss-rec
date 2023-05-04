@@ -38,13 +38,13 @@ con.ft("idx:{}".format(index_name)).create_index(idx_schema, idx_def)
 
 ### `add`
 
-This method adds a vector with meta data to the database. I use a Redis Hash in this case, but you can also store a vector within a JSON field.
+This method adds a vector with meta data to the database. I use a [Redis hash](https://www.redis.io](https://redis.io/docs/data-types/hashes/) in this case, but you can also store vectors within a JSON with Redis Stack.
 
 ```
 con.hset("{}:{}".format(item_type, item_id), mapping=data)
 ```
 
-The data dictionary contains the fields `labels`, `descr`, `time`, and `vec`. The vector is stored as binary within the `vec` field. The `numpy` library is used to convert a more human-readable float vector (a Python list) to its byte string representation:
+The data dictionary contains the fields `labels`, `descr`, `time`, and `vec`. The vector is stored as binary within the `vec` field. The library `numpy` is used to convert a more human-readable float vector (a Python list) to its byte string representation:
 
 ```
 data["vec"] = np.array(vector).astype(np.float32).tobytes()
@@ -56,5 +56,26 @@ Here is an example of such a data dictionary:
 data = {'time': 1683233711.983063, 'descr': 'Samuel is into books and comics', 'labels': 'books, comics', 'vec': b'fff?333?\xcd\xccL>'}
 ```
 
-* 
+### `vector_search`
+
+The `vector_search` method performs a vector similarity search. I decide to only return the id and vector score in my implementation. The vector query string takes a few arguments:
+
+```
+vector_query = "{}=>[KNN {} @{} $vector]".format(meta_data_query, num_neighbours, vector_field)
+```
+
+What I called `meta data query`  refers to a RediSearch query that is, in the first step, not related to the vector. This allows you to pre-filter based on additional meta data fields, such as the description (`desc`), or the `labels`.
+
+You can then query the following way:
+
+```
+# The name of the vector score field depends on the name of the vector field
+vector_score_field = "__{}_score".format("vec")
+redis_query = Query(vector_query).return_fields("_id", vector_score_field).sort_by(vector_score_field, True).dialect(2)
+
+con.ft("idx:{}".format(index_name)).search(redis_query, query_params={"vector": search_vector})
+```
+
+Please take a look at the [vector similarity search reference documentation](https://redis.io/docs/stack/search/reference/vectors/) for further details.
+
 
