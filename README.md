@@ -55,7 +55,7 @@ self.con.ft("idx:{}".format(index_name)).create_index(idx_schema, idx_def)
 
 ### `add`
 
-This method adds a vector with metadata to the database. I use a [Redis hash](https://redis.io/docs/data-types/hashes/) in this case, but you can also store vectors within a JSON with Redis Stack.
+This method adds a vector with metadata to the database. I use a [Redis hash](https://redis.io/docs/data-types/hashes/) in this case, but you can also store vectors within JSON with Redis Stack.
 
 ```
 self.con.hset("{}:{}".format(item_type, item_id), mapping=data)
