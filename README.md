@@ -100,9 +100,9 @@ For further details, please look at the [vector similarity search reference docu
 
 As explained, I decided to add a thin layer of abstraction by implementing [this `VectorDB`](./vss-rec/vector_db.py) class.
 
-The following example shows how to
+The following example shows how to:
 
-1. Create the index
+1. Create an index
 2. Add some vectors with metadata
 3. Perform a simple query for users that are labeled with specific interests
 4. Execute a vector similarity search for the two nearest neighbours
