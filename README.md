@@ -1,4 +1,4 @@
-# Redis as a Vector Database for Recommendations
+# Redis as a vector database for recommendations
 
 This repository contains example code for using Redis Stack's vector similarity search as a recommendation engine.
 
@@ -17,14 +17,17 @@ The following table shows the vector `[0.9, 0.7, 0.2]`:
 
 Let's assume that a user is only interested in a specific category if the interest value is larger than the threshold of `0.4`, which means that our user is interested in 'books' and 'comics' but not in  'computers'.
 
-## Redis as a Vector Database
+## How to use Redis
 
 You can use Redis Stack's query and search capabilities to:
-Index vectors
-Find similar vectors
+
+* Index vectors
+* Find similar vectors
+
 My source code example wraps the Redis commands by using a `VectorDB` class. Let's look at some of the methods I implemented for accessing Redis.
 
 ### `init`
+
 The connection happens within the constructor of the class:
 
 ```
