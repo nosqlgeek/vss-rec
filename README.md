@@ -31,7 +31,7 @@ idx_schema = (VectorField("vec", "HNSW", {"TYPE": "FLOAT32", "DIM": dimension, "
               TagField("labels", sortable=True),
               NumericField("time", sortable=True))
 idx_def = IndexDefinition(prefix=["{}:".format(item_type)])
-self.con.ft("idx:{}".format(index_name)).create_index(idx_schema, idx_def)
+con.ft("idx:{}".format(index_name)).create_index(idx_schema, idx_def)
 ```
 
 * 
