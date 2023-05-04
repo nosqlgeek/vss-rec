@@ -49,8 +49,10 @@ class VectorDB:
                      ):
 
         # Example idx_schema:
-        # (VectorField("probabilities", "HNSW", {"TYPE": "FLOAT32", "DIM": 3, "DISTANCE_METRIC": "COSINE"}),
-        #              TagField("categories"))
+        # (VectorField("vec", "HNSW", {"TYPE": "FLOAT32", "DIM": dimension, "DISTANCE_METRIC": "COSINE"}),
+        #  TextField("descr"),
+        #  TagField("labels", sortable=True),
+        #  NumericField("time", sortable=True))
         idx_schema = []
 
         for k in schema:
@@ -90,7 +92,7 @@ class VectorDB:
 
         data[vector_field] = np.array(vector).astype(np.float32).tobytes()
 
-
+        #print("data = {}".format(str(data)))
         return self.con.hset("{}:{}".format(item_type, item_id), mapping=data)
 
     '''
@@ -106,9 +108,9 @@ class VectorDB:
     def vector_search(self, meta_data_query, vector, num_neighbours, index_name="vectors", vector_field="vec"):
         search_vector = np.array(vector).astype(np.float32).tobytes()
         vector_score_field = "__{}_score".format(vector_field)
-        full_query = "{}=>[KNN {} @{} $vector]".format(meta_data_query, num_neighbours, vector_field)
+        vector_query = "{}=>[KNN {} @{} $vector]".format(meta_data_query, num_neighbours, vector_field)
 
-        redis_query = Query(full_query).return_fields("_id", vector_score_field).sort_by(vector_score_field, True).dialect(2)
+        redis_query = Query(vector_query).return_fields("_id", vector_score_field).sort_by(vector_score_field, True).dialect(2)
         result = self.con.ft("idx:{}".format(index_name)).search(redis_query, query_params={"vector": search_vector})
         return map(lambda d: {"id": d["id"].split(":")[1],
                               "type": d["id"].split(":")[0],
