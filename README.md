@@ -123,7 +123,7 @@ if __name__ == '__main__':
         print(db.get(r["type"], r["id"]))
 ```
 
-The output of this program then is:
+The output of this program is:
 
 ```
 Creating the index ...
