@@ -75,13 +75,17 @@ data = {'time': 1683233711.983063, 'descr': 'Samuel is into books and comics', '
 
 ### `vector_search`
 
-The `vector_search` method performs a vector similarity search. I decide only to return the id and vector score in my implementation. My vector query string takes a few arguments:
+The `vector_search` method performs a vector similarity search. My implementation only returns the id and vector score. The query string has takes a few arguments:
+
+* **Metadata query**: The query that is executed to pre-filter based on the metadata, such as the description (`desc`) or the `labels`, before the vector similarity search is performed
+* **Number of neighbours**: The number of nearest neighbours (KNN)
+* **Vector field**: The vector field that is used for the search, whereby Redis can store multiple vector fields within an item (hash or JSON)
+
+Here is the source code that constructs the vector query string:
 
 ```
 vector_query = "{}=>[KNN {} @{} $vector]".format(meta_data_query, num_neighbours, vector_field)
 ```
-
-What I call `metadata query`  refers to a RediSearch query that is, in the first step, not related to the vector. This allows you to pre-filter based on additional metadata fields, such as the description (`desc`) or the `labels`.
 
 You can then query the database the following way:
 
@@ -100,7 +104,7 @@ For further details, please look at the [vector similarity search reference docu
 
 As explained, I decided to add a thin layer of abstraction by implementing [this `VectorDB`](./vss-rec/vector_db.py) class.
 
-The following example shows how to:
+The following example shows how to use it:
 
 1. Create an index
 2. Add some vectors with metadata
@@ -108,7 +112,7 @@ The following example shows how to:
 4. Execute a vector similarity search for the two nearest neighbours
 
 
-Here is the source code:
+Here is the source code of the demo application:
 
 ```
 import os
