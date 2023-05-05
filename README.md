@@ -24,11 +24,11 @@ You can use Redis Stack's query and search capabilities to:
 * Index vectors
 * Find similar vectors
 
-My source code example wraps the Redis commands by using a `VectorDB` class. Let's look at some of the methods I implemented for accessing Redis.
+My source code example wraps the Redis commands by using a `VectorDB` class. Let's look at some of the methods I implemented for accessing Redis:
 
 ### `init`
 
-The connection happens within the constructor of the class:
+The Redis connection is established within the constructor of the `VectorDB` class:
 
 ```
 def __init__(self, host, port, password):
@@ -75,11 +75,11 @@ data = {'time': 1683233711.983063, 'descr': 'Samuel is into books and comics', '
 
 ### `vector_search`
 
-The `vector_search` method performs a vector similarity search. My implementation only returns the id and vector score. The query string has takes a few arguments:
+The `vector_search` method performs a vector similarity search. My implementation only returns the id and vector score. The query string has a few arguments:
 
-* **Metadata query**: The query that is executed to pre-filter based on the metadata, such as the description (`desc`) or the `labels`, before the vector similarity search is performed
-* **Number of neighbours**: The number of nearest neighbours (KNN)
-* **Vector field**: The vector field that is used for the search, whereby Redis can store multiple vector fields within an item (hash or JSON)
+* **Metadata query**: The variable `meta_data_query` is set to the query string that is executed to pre-filter based on the metadata, such as the description (`desc`) or the `labels`, before the vector similarity search is performed. The `=>` operator means `execute before => execute after`.
+* **Number of neighbours**: The value of `num_neighbours` is set to the KNN integer value.
+* **Vector field**: This is the vector field that is used for the search. Redis can store multiple vector fields within an item (hash or JSON).
 
 Here is the source code that constructs the vector query string:
 
