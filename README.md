@@ -77,7 +77,7 @@ data = {'time': 1683233711.983063, 'descr': 'Samuel is into books and comics', '
 
 The `vector_search` method performs a vector similarity search. My implementation only returns the id and vector score. The query string has a few arguments:
 
-* **Metadata query**: The variable `meta_data_query` is set to the query string that is executed to pre-filter based on the metadata, such as the description (`desc`) or the `labels`, before the vector similarity search is performed. The `=>` operator means `execute before => execute after`.
+* **Metadata query**: The variable `meta_data_query` is set to the query string that is executed to pre-filter based on the metadata, such as the description (`desc`) or the `labels`. The `=>` operator means `execute before => execute after`. So, the metadata query is executed before the vector similarity search is performed.
 * **Number of neighbours**: The value of `num_neighbours` is set to the KNN integer value.
 * **Vector field**: This is the vector field that is used for the search. Redis can store multiple vector fields within an item (hash or JSON).
 
